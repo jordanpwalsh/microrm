@@ -2,6 +2,7 @@ package microrm
 
 import (
 	"fmt"
+	"os"
 	"testing"
 )
 
@@ -17,13 +18,15 @@ type TestStructure struct {
 var microrm *Microrm
 var err error
 
-func TestCreateTable(t *testing.T) {
-	fmt.Println("from testcreatetable:", microrm.path)
-	//microrm, err = Open("./unit_test.db")
+func TestOpen(t *testing.T) {
+	microrm, err = Open("./unit_test.db")
 	if err != nil {
 		t.Errorf("Failed to create database")
 	}
+}
 
+func TestCreateTable(t *testing.T) {
+	fmt.Println("from testcreatetable:", microrm.path)
 	createResult, error := microrm.CreateTable("test_table", TestStructure{})
 	if createResult != true || error != nil {
 		t.Errorf("Failed to create table")
@@ -31,28 +34,15 @@ func TestCreateTable(t *testing.T) {
 }
 
 func TestDropTable(t *testing.T) {
-
-	// //figure out how to reuse some of these so prevent a bunch of duplication.
-	// microrm, err = Open("./unit_test.db")
-	// if err != nil {
-	// 	t.Errorf("Failed to create database")
-	// }
-
 	dropResult, error := microrm.DropTable("test_table")
 	if dropResult != true || error != nil {
 		t.Errorf("Failed to drop table")
 	}
 }
 
-func init() {
-	fmt.Println("init running")
-	var err error
-	microrm = &Microrm{path: "test"}
-
-	//play with microrm instantiation
-	microrm, err = Open("./unit_test.db")
-	if err != nil {
-		panic("Failed to create database")
+func TestCloseTable(t *testing.T) {
+	microrm.Close()
+	if err := os.Remove("./unit_test.db"); err != nil {
+		t.Errorf("Failed to remove database file")
 	}
-	//defer microrm.Close()
 }
