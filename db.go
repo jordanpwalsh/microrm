@@ -1,0 +1,129 @@
+package microrm
+
+import (
+	"database/sql"
+	"errors"
+	"fmt"
+	"log"
+	"os"
+	"reflect"
+	"strings"
+
+	_ "github.com/mattn/go-sqlite3"
+)
+
+//this will be replaced
+func CreateDatabase(path string) {
+	if _, err := os.Stat(path); err != nil {
+		fmt.Println("Creating initial DB...")
+		db, err := sql.Open("sqlite3", path)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer db.Close()
+		query, err := db.Prepare(DB_CREATE_TABLE_SQL)
+		if err != nil {
+			log.Fatal(err)
+		}
+		query.Exec()
+	}
+}
+
+//this will be replaced once migrations are a thing
+func CreateTable(db *sql.DB, tableName string, tableStruct interface{}) (bool, error) {
+	//Support struct tags for modifiers like not null - we'll allow nulls for the moment
+
+	createQuery := fmt.Sprintf("CREATE TABLE %s (", tableName)
+
+	structFields := reflect.VisibleFields(reflect.TypeOf(tableStruct))
+	for _, field := range structFields {
+		//ok we have types and field named we can build a string from
+		//handle int, string, and bool for the moment
+		//pk todo: use rowid
+		if field.Tag.Get("microrm") == "pk" {
+			if field.Type.Kind() != reflect.Int {
+				return false, errors.New("primary key must be type int")
+			}
+			createQuery += fmt.Sprintf("%s INTEGER PRIMARY KEY AUTOINCREMENT,", field.Name)
+		} else {
+			createQuery += fmt.Sprintf("%s %s,", field.Name, field.Type)
+		}
+	}
+	createQuery = strings.TrimSuffix(createQuery, ",")
+	createQuery += ")"
+	fmt.Println(createQuery)
+
+	if _, err := (db.Exec(createQuery)); err != nil {
+		log.Fatal(err)
+		return false, err
+	}
+	return true, nil
+}
+
+//this will be replaced once migrations are a thing
+func DropTable(db *sql.DB, tableName string) (bool, error) {
+	dropQuery := fmt.Sprintf("DROP TABLE IF EXISTS %s", tableName)
+
+	_, err := db.Exec(dropQuery)
+	if err != nil {
+		log.Fatal(err)
+		return false, err
+	}
+	return true, nil
+}
+
+//to make this chainable, just return a reciever
+func FindOne(db *sql.DB, tableObj interface{}) (bool, error) {
+	tableName := strings.ToLower(reflect.TypeOf(tableObj).Elem().Name())
+
+	selectQuery := fmt.Sprintf("SELECT * FROM %s", tableName)
+
+	rows, err := db.Query(selectQuery)
+	if err != nil {
+		return false, err
+	}
+	defer rows.Close()
+
+	rc, err := rows.ColumnTypes()
+	if err != nil {
+		return false, err
+	}
+
+	//make a new slice to scan the values
+	obj := make([]interface{}, len(rc))
+	for i := range rc {
+		var iface interface{}
+		obj[i] = &iface
+	}
+
+	//now we have a []interface{} filled with ready types and we're ready to scan
+	if !rows.Next() {
+		return false, nil
+	}
+
+	rows.Scan(obj...)
+
+	//map to fields without calling them: todo fields <-> obj elems
+	for i, field := range rc {
+		var value = *(obj[i].(*interface{}))
+		//get the type of the struct field
+		fieldNameCased := strings.ToUpper(field.Name()[:1]) + field.Name()[1:]
+		fieldType := reflect.ValueOf(tableObj).Elem().FieldByName(fieldNameCased).Type()
+		//in the case of bools we need to check because sqlite does not have bools so
+		//so they are stores as integers. The set() below will fail with cannot cast int64 to bool
+		//TODO any other types to handle edge case? check the ones handled by scan? write a unit test to find out
+		if fieldType.Kind() == reflect.Bool {
+			//the problem was type assertion - research this
+			if value.(int64) == 0 {
+				value = false
+			} else {
+				value = true
+			}
+		}
+		reflect.ValueOf(tableObj).Elem().FieldByName(fieldNameCased).
+			Set(reflect.ValueOf(value))
+	}
+
+	//make sure query rows.next again and error out cause we're only returning one here
+	return true, nil
+}
