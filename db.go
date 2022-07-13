@@ -8,7 +8,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"os"
 	"reflect"
 	"strings"
 
@@ -21,17 +20,16 @@ type Microrm struct {
 }
 
 func Open(path string) (*Microrm, error) {
-	db := Microrm{} //investigate why fields are not set - nil
+	db := new(Microrm) //investigate why fields are not set - nil
+	var err error
 
-	if _, err := os.Stat(path); err != nil {
-		db.sqlDb, err = sql.Open("sqlite3", path)
-		db.path = path
-		if err != nil {
-			return nil, err
-		}
+	db.sqlDb, err = sql.Open("sqlite3", path)
+	db.path = path
+	if err != nil {
+		return nil, err
 	}
 	fmt.Println(db)
-	return &db, nil
+	return db, nil
 }
 
 func (db *Microrm) Close() {

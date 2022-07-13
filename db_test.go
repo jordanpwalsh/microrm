@@ -14,8 +14,11 @@ type TestStructure struct {
 	//add all the go primitives
 }
 
+var microrm *Microrm
+var err error
+
 func TestCreateTable(t *testing.T) {
-	microrm, err := Open("./unit_test.db")
+	microrm, err = Open("./unit_test.db")
 	if err != nil {
 		t.Errorf("Failed to create database")
 	}
@@ -26,12 +29,17 @@ func TestCreateTable(t *testing.T) {
 	}
 }
 
-// func TestDropTable(t *testing.T) {
-// 	dropResult, error := microrm.DropTable("test_table")
-// 	if dropResult != true || error != nil {
-// 		t.Errorf("Failed to drop table")
-// 	}
-// }
+func TestDropTable(t *testing.T) {
+	microrm, err = Open("./unit_test.db")
+	if err != nil {
+		t.Errorf("Failed to create database")
+	}
+
+	dropResult, error := microrm.DropTable("test_table")
+	if dropResult != true || error != nil {
+		t.Errorf("Failed to drop table")
+	}
+}
 
 func TestMain(m *testing.M) {
 	var err error
