@@ -11,8 +11,6 @@ type TestStructure struct {
 	name      string
 	byte_val  byte
 	float_val float64
-
-	//add all the go primitives
 }
 
 var microrm *Microrm
