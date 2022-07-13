@@ -1,7 +1,7 @@
 package microrm
 
 import (
-	"os"
+	"fmt"
 	"testing"
 )
 
@@ -18,7 +18,8 @@ var microrm *Microrm
 var err error
 
 func TestCreateTable(t *testing.T) {
-	microrm, err = Open("./unit_test.db")
+	fmt.Println("from testcreatetable:", microrm.path)
+	//microrm, err = Open("./unit_test.db")
 	if err != nil {
 		t.Errorf("Failed to create database")
 	}
@@ -31,11 +32,11 @@ func TestCreateTable(t *testing.T) {
 
 func TestDropTable(t *testing.T) {
 
-	//figure out how to reuse some of these so prevent a bunch of duplication.
-	microrm, err = Open("./unit_test.db")
-	if err != nil {
-		t.Errorf("Failed to create database")
-	}
+	// //figure out how to reuse some of these so prevent a bunch of duplication.
+	// microrm, err = Open("./unit_test.db")
+	// if err != nil {
+	// 	t.Errorf("Failed to create database")
+	// }
 
 	dropResult, error := microrm.DropTable("test_table")
 	if dropResult != true || error != nil {
@@ -43,17 +44,15 @@ func TestDropTable(t *testing.T) {
 	}
 }
 
-func TestMain(m *testing.M) {
+func init() {
+	fmt.Println("init running")
 	var err error
+	microrm = &Microrm{path: "test"}
 
-	microrm, err := Open("./unit_test.db")
+	//play with microrm instantiation
+	microrm, err = Open("./unit_test.db")
 	if err != nil {
 		panic("Failed to create database")
 	}
-	defer microrm.Close()
-
-	retCode := m.Run()
-
-	os.Exit(retCode)
-
+	//defer microrm.Close()
 }
