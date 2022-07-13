@@ -12,7 +12,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-//this will be replaced
+//this will be replaced - test
 func CreateDatabase(path string) {
 	if _, err := os.Stat(path); err != nil {
 		fmt.Println("Creating initial DB...")
