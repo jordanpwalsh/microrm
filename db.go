@@ -28,7 +28,6 @@ func Open(path string) (*Microrm, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(db)
 	return db, nil
 }
 
