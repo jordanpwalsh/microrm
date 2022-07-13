@@ -1,4 +1,4 @@
-module microrm
+module github.com/jordanpwalsh/microrm
 
 go 1.18
 
