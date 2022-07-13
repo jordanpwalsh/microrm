@@ -21,7 +21,7 @@ type Microrm struct {
 }
 
 func Open(path string) (*Microrm, error) {
-	db := Microrm{}
+	db := Microrm{} //investigate why fields are not set - nil
 
 	if _, err := os.Stat(path); err != nil {
 		db.sqlDb, err = sql.Open("sqlite3", path)
@@ -30,6 +30,7 @@ func Open(path string) (*Microrm, error) {
 			return nil, err
 		}
 	}
+	fmt.Println(db)
 	return &db, nil
 }
 
