@@ -57,8 +57,8 @@ func (microrm *Microrm) CreateTable(tableName string, tableStruct interface{}) (
 	}
 	createQuery = strings.TrimSuffix(createQuery, ",")
 	createQuery += ")"
-	
-	TODO: add debug logging
+
+	//TODO: add debug logging
 	//fmt.Println(createQuery)
 
 	if _, err := (microrm.sqlDb.Exec(createQuery)); err != nil {
