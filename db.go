@@ -21,11 +21,6 @@ func CreateDatabase(path string) {
 			log.Fatal(err)
 		}
 		defer db.Close()
-		query, err := db.Prepare(DB_CREATE_TABLE_SQL)
-		if err != nil {
-			log.Fatal(err)
-		}
-		query.Exec()
 	}
 }
 
