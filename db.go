@@ -1,5 +1,8 @@
 package microrm
 
+//todo notes
+//need to make type and implement create database
+
 import (
 	"database/sql"
 	"errors"
@@ -12,20 +15,30 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-//this will be replaced - test
-func CreateDatabase(path string) {
+type Microrm struct {
+	sqlDb *sql.DB
+	path  string
+}
+
+func Open(path string) (*Microrm, error) {
+	db := Microrm{}
+
 	if _, err := os.Stat(path); err != nil {
-		fmt.Println("Creating initial DB...")
-		db, err := sql.Open("sqlite3", path)
+		db.sqlDb, err = sql.Open("sqlite3", path)
+		db.path = path
 		if err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
-		defer db.Close()
 	}
+	return &db, nil
+}
+
+func (db *Microrm) Close() {
+	db.sqlDb.Close()
 }
 
 //this will be replaced once migrations are a thing
-func CreateTable(db *sql.DB, tableName string, tableStruct interface{}) (bool, error) {
+func (microrm *Microrm) CreateTable(tableName string, tableStruct interface{}) (bool, error) {
 	//Support struct tags for modifiers like not null - we'll allow nulls for the moment
 
 	createQuery := fmt.Sprintf("CREATE TABLE %s (", tableName)
@@ -48,7 +61,7 @@ func CreateTable(db *sql.DB, tableName string, tableStruct interface{}) (bool, e
 	createQuery += ")"
 	fmt.Println(createQuery)
 
-	if _, err := (db.Exec(createQuery)); err != nil {
+	if _, err := (microrm.sqlDb.Exec(createQuery)); err != nil {
 		log.Fatal(err)
 		return false, err
 	}
@@ -56,10 +69,10 @@ func CreateTable(db *sql.DB, tableName string, tableStruct interface{}) (bool, e
 }
 
 //this will be replaced once migrations are a thing
-func DropTable(db *sql.DB, tableName string) (bool, error) {
+func (microrm *Microrm) DropTable(tableName string) (bool, error) {
 	dropQuery := fmt.Sprintf("DROP TABLE IF EXISTS %s", tableName)
 
-	_, err := db.Exec(dropQuery)
+	_, err := microrm.sqlDb.Exec(dropQuery)
 	if err != nil {
 		log.Fatal(err)
 		return false, err
