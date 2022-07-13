@@ -30,6 +30,8 @@ func TestCreateTable(t *testing.T) {
 }
 
 func TestDropTable(t *testing.T) {
+
+	//figure out how to reuse some of these so prevent a bunch of duplication.
 	microrm, err = Open("./unit_test.db")
 	if err != nil {
 		t.Errorf("Failed to create database")
