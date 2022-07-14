@@ -158,9 +158,12 @@ func FindOne(db *sql.DB, tableObj interface{}) (bool, error) {
 	return true, nil
 }
 
-func (microrm *Microrm) InsertOne(interface{}) error {
-	//go through tableobj and map fields -> types
+func (microrm *Microrm) InsertOne(tableObj interface{}) error {
+	//go through tableobj and map fields -> types (use the mapper function)
 	//run sql to insert row
+	fieldMappings := mapField(tableObj)
+
+	//get the field values from each object.. should the mapper do that?
 
 	return nil
 }
