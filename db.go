@@ -19,6 +19,28 @@ type Microrm struct {
 	path  string
 }
 
+type RecordMapping struct {
+	name     string
+	dataType reflect.Type
+	sqlType  string
+	tag      string
+}
+
+func mapField(record interface{}) []RecordMapping {
+	structFields := reflect.VisibleFields(reflect.TypeOf(record))
+	recordMappings := make([]RecordMapping, 0)
+
+	for _, field := range structFields {
+		var recordMapping RecordMapping
+		recordMapping.name = field.Name
+		recordMapping.dataType = field.Type
+		recordMapping.sqlType = field.Type.Kind().String() //expand on this later
+		recordMapping.tag = field.Tag.Get("microrm")
+		recordMappings = append(recordMappings, recordMapping)
+	}
+	return recordMappings
+}
+
 func Open(path string) (*Microrm, error) {
 	db := new(Microrm) //investigate why fields are not set - nil
 	var err error
@@ -135,3 +157,9 @@ func FindOne(db *sql.DB, tableObj interface{}) (bool, error) {
 	//make sure query rows.next again and error out cause we're only returning one here
 	return true, nil
 }
+
+// func (microrm *Microrm) InsertOne(interface{}) (bool, error) {
+// 	//go through tableobj and map fields -> types
+// 	//run sql to insert row
+
+// }

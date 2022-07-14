@@ -16,6 +16,23 @@ type TestStructure struct {
 var microrm *Microrm
 var err error
 
+func TestMapField(t *testing.T) {
+	testStruct := TestStructure{
+		id:        1,
+		name:      "testVarName",
+		byte_val:  22,
+		float_val: 3.14159,
+	}
+
+	fieldMappings := mapField(testStruct)
+	fmt.Println("field mappings length:", len(fieldMappings))
+	fmt.Println("name:", fieldMappings[0].name)
+	fmt.Println("type:", fieldMappings[0].dataType)
+	fmt.Println("sql type:", fieldMappings[0].sqlType)
+	fmt.Println("tag:", fieldMappings[0].tag)
+	//TODO: write some test conditions
+
+}
 func TestOpen(t *testing.T) {
 	microrm, err = Open("./unit_test.db")
 	if err != nil {
