@@ -102,7 +102,7 @@ func (microrm *Microrm) DropTable(tableName string) (bool, error) {
 	return true, nil
 }
 
-//to make this chainable, just return a reciever
+//refactor this to use field mapper function
 func FindOne(db *sql.DB, tableObj interface{}) (bool, error) {
 	tableName := strings.ToLower(reflect.TypeOf(tableObj).Elem().Name())
 
@@ -158,8 +158,9 @@ func FindOne(db *sql.DB, tableObj interface{}) (bool, error) {
 	return true, nil
 }
 
-// func (microrm *Microrm) InsertOne(interface{}) (bool, error) {
-// 	//go through tableobj and map fields -> types
-// 	//run sql to insert row
+func (microrm *Microrm) InsertOne(interface{}) error {
+	//go through tableobj and map fields -> types
+	//run sql to insert row
 
-// }
+	return nil
+}
