@@ -159,6 +159,7 @@ func (microrm *Microrm) Find(tableObj interface{}, id int) (bool, error) {
 	return true, nil
 }
 
+//TODO: insert should use table name instead of inferring from the type
 func (microrm *Microrm) InsertOne(tableObj interface{}) error {
 	tableName := reflect.TypeOf(tableObj).Name()
 	fieldMappings := mapRecordFields(tableObj)
