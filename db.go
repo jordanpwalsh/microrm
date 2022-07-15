@@ -28,6 +28,13 @@ type RecordMapping struct {
 	tag      string
 }
 
+func inferTableName(record interface{}) string {
+	//might need to check for empty here and return Elem.Name if not an empty struct
+	tableName := reflect.TypeOf(record).Name()
+
+	return tableName
+}
+
 func mapRecordFields(record interface{}) []RecordMapping {
 	structFields := reflect.VisibleFields(reflect.TypeOf(record))
 	recordMappings := make([]RecordMapping, 0)

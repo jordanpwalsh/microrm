@@ -17,6 +17,27 @@ type TestStructure struct {
 var microrm *Microrm
 var err error
 
+func TestInferTableName(t *testing.T) {
+	tableName := inferTableName(TestStructure{})
+	if tableName != "TestStructure" {
+		golog.Info("TableName:", tableName)
+		t.Error("Table name not as expected")
+	}
+
+	testStruct := TestStructure{
+		Id:        1,
+		Name:      "testVarName",
+		Byte_val:  22,
+		Float_val: 3.14159,
+	}
+	tableName = inferTableName(testStruct)
+	if tableName != "TestStructure" {
+		golog.Info("TableName:", tableName)
+		t.Error("Table name not as expected")
+	}
+
+}
+
 func TestMapField(t *testing.T) {
 	testStruct := TestStructure{
 		Id:        1,
