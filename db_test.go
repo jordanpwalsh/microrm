@@ -8,10 +8,10 @@ import (
 )
 
 type TestStructure struct {
-	id        int `microrm:"pk"`
-	name      string
-	byte_val  byte
-	float_val float64
+	Id        int `microrm:"pk"`
+	Name      string
+	Byte_val  byte
+	Float_val float64
 }
 
 var microrm *Microrm
@@ -19,13 +19,13 @@ var err error
 
 func TestMapField(t *testing.T) {
 	testStruct := TestStructure{
-		id:        1,
-		name:      "testVarName",
-		byte_val:  22,
-		float_val: 3.14159,
+		Id:        1,
+		Name:      "testVarName",
+		Byte_val:  22,
+		Float_val: 3.14159,
 	}
 
-	fieldMappings := mapField(testStruct)
+	fieldMappings := mapRecordFields(testStruct)
 	golog.Debug("field mappings length:", len(fieldMappings))
 	golog.Debug("name:", fieldMappings[0].name)
 	golog.Debug("type:", fieldMappings[0].dataType)
@@ -47,6 +47,17 @@ func TestCreateTable(t *testing.T) {
 	if createResult != true || error != nil {
 		t.Errorf("Failed to create table")
 	}
+}
+
+func TestInsertOne(t *testing.T) {
+	testStruct := TestStructure{
+		Name:      "testVarName",
+		Byte_val:  22,
+		Float_val: 3.14159,
+	}
+	microrm.InsertOne(testStruct)
+
+	t.Error("Test Not Ready")
 }
 
 func TestDropTable(t *testing.T) {

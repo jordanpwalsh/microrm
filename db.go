@@ -28,7 +28,7 @@ type RecordMapping struct {
 	tag      string
 }
 
-func mapField(record interface{}) []RecordMapping {
+func mapRecordFields(record interface{}) []RecordMapping {
 	structFields := reflect.VisibleFields(reflect.TypeOf(record))
 	recordMappings := make([]RecordMapping, 0)
 
@@ -104,12 +104,12 @@ func (microrm *Microrm) DropTable(tableName string) (bool, error) {
 }
 
 //refactor this to use field mapper function
-func FindOne(db *sql.DB, tableObj interface{}) (bool, error) {
+func (microrm *Microrm) Find(tableObj interface{}, id int) (bool, error) {
 	tableName := strings.ToLower(reflect.TypeOf(tableObj).Elem().Name())
 
-	selectQuery := fmt.Sprintf("SELECT * FROM %s", tableName)
+	selectQuery := fmt.Sprintf("SELECT * FROM %s WHERE id=%d", tableName, id)
 
-	rows, err := db.Query(selectQuery)
+	rows, err := microrm.sqlDb.Query(selectQuery)
 	if err != nil {
 		return false, err
 	}
@@ -159,12 +159,32 @@ func FindOne(db *sql.DB, tableObj interface{}) (bool, error) {
 	return true, nil
 }
 
-// func (microrm *Microrm) InsertOne(tableObj interface{}) error {
-// 	//go through tableobj and map fields -> types (use the mapper function)
-// 	//run sql to insert row
-// 	fieldMappings := mapField(tableObj)
+func (microrm *Microrm) InsertOne(tableObj interface{}) error {
+	tableName := reflect.TypeOf(tableObj).Name()
+	fieldMappings := mapRecordFields(tableObj)
 
-// 	//get the field values from each object.. should the mapper do that?
+	//get the field values from each object.. should the mapper do that?
 
-// 	return nil
-// }
+	//build two strings: typeString: name, type and valueString: values
+	//first from field mapping, second from fields by index if possible.
+	var typeString string
+	for _, field := range fieldMappings {
+		typeString += fmt.Sprintf("%s,", field.name)
+	}
+	typeString = strings.TrimSuffix(typeString, ",")
+
+	refTableObj := reflect.ValueOf(tableObj)
+	var valueString string
+	for i := 0; i < refTableObj.NumField(); i++ {
+		valueString += fmt.Sprintf("\"%v\",", refTableObj.Field(i).Interface())
+	}
+	valueString = strings.TrimSuffix(valueString, ",")
+	golog.Info("typeString:", typeString)
+	golog.Info("valueString:", valueString)
+
+	queryString := fmt.Sprintf("INSERT INTO %s(%s) VALUES(%s)", tableName, typeString, valueString)
+	golog.Info("queryString:", queryString)
+
+	return nil
+
+}
