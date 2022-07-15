@@ -42,7 +42,6 @@ func TestOpen(t *testing.T) {
 }
 
 func TestCreateTable(t *testing.T) {
-	golog.Debug("from testcreatetable:", microrm.path)
 	createResult, error := microrm.CreateTable("test_table", TestStructure{})
 	if createResult != true || error != nil {
 		t.Errorf("Failed to create table")
