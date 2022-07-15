@@ -192,7 +192,11 @@ func (microrm *Microrm) InsertOne(tableObj interface{}) error {
 
 	queryString := fmt.Sprintf("INSERT INTO %s(%s) VALUES(%s)", tableName, typeString, valueString)
 	golog.Info("queryString:", queryString)
-
+	result, err := microrm.sqlDb.Exec(queryString)
+	if err != nil {
+		golog.Error(result)
+		return err
+	}
 	return nil
 
 }

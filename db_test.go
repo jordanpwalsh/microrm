@@ -75,9 +75,10 @@ func TestInsertOne(t *testing.T) {
 		Byte_val:  22,
 		Float_val: 3.14159,
 	}
-	microrm.InsertOne(testStruct)
-
-	t.Error("Test Not Ready")
+	err := microrm.InsertOne(testStruct)
+	if err != nil {
+		t.Error("Error inserting row", err)
+	}
 }
 
 func TestDropTable(t *testing.T) {
