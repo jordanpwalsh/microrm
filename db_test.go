@@ -1,9 +1,10 @@
 package microrm
 
 import (
-	"fmt"
 	"os"
 	"testing"
+
+	"github.com/kataras/golog"
 )
 
 type TestStructure struct {
@@ -25,11 +26,11 @@ func TestMapField(t *testing.T) {
 	}
 
 	fieldMappings := mapField(testStruct)
-	fmt.Println("field mappings length:", len(fieldMappings))
-	fmt.Println("name:", fieldMappings[0].name)
-	fmt.Println("type:", fieldMappings[0].dataType)
-	fmt.Println("sql type:", fieldMappings[0].sqlType)
-	fmt.Println("tag:", fieldMappings[0].tag)
+	golog.Debug("field mappings length:", len(fieldMappings))
+	golog.Debug("name:", fieldMappings[0].name)
+	golog.Debug("type:", fieldMappings[0].dataType)
+	golog.Debug("sql type:", fieldMappings[0].sqlType)
+	golog.Debug("tag:", fieldMappings[0].tag)
 	//TODO: write some test conditions
 
 }
@@ -41,7 +42,7 @@ func TestOpen(t *testing.T) {
 }
 
 func TestCreateTable(t *testing.T) {
-	fmt.Println("from testcreatetable:", microrm.path)
+	golog.Debug("from testcreatetable:", microrm.path)
 	createResult, error := microrm.CreateTable("test_table", TestStructure{})
 	if createResult != true || error != nil {
 		t.Errorf("Failed to create table")
@@ -59,5 +60,11 @@ func TestCloseTable(t *testing.T) {
 	microrm.Close()
 	if err := os.Remove("./unit_test.db"); err != nil {
 		t.Errorf("Failed to remove database file")
+	}
+}
+
+func init() {
+	if os.Getenv("GOLOG_LEVEL") == "debug" {
+		golog.SetLevel("debug")
 	}
 }

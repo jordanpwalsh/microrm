@@ -11,6 +11,8 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/kataras/golog"
+
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -80,8 +82,7 @@ func (microrm *Microrm) CreateTable(tableName string, tableStruct interface{}) (
 	createQuery = strings.TrimSuffix(createQuery, ",")
 	createQuery += ")"
 
-	//TODO: add debug logging
-	//fmt.Println(createQuery)
+	golog.Debug(createQuery)
 
 	if _, err := (microrm.sqlDb.Exec(createQuery)); err != nil {
 		log.Fatal(err)
@@ -158,12 +159,12 @@ func FindOne(db *sql.DB, tableObj interface{}) (bool, error) {
 	return true, nil
 }
 
-func (microrm *Microrm) InsertOne(tableObj interface{}) error {
-	//go through tableobj and map fields -> types (use the mapper function)
-	//run sql to insert row
-	fieldMappings := mapField(tableObj)
+// func (microrm *Microrm) InsertOne(tableObj interface{}) error {
+// 	//go through tableobj and map fields -> types (use the mapper function)
+// 	//run sql to insert row
+// 	fieldMappings := mapField(tableObj)
 
-	//get the field values from each object.. should the mapper do that?
+// 	//get the field values from each object.. should the mapper do that?
 
-	return nil
-}
+// 	return nil
+// }
