@@ -82,7 +82,8 @@ func TestInsertOne(t *testing.T) {
 }
 
 func TestDropTable(t *testing.T) {
-	dropResult, error := microrm.DropTable("test_table")
+	//refactor this
+	dropResult, error := microrm.DropTable(TestStructure{})
 	if dropResult != true || error != nil {
 		t.Errorf("Failed to drop table")
 	}

@@ -101,7 +101,8 @@ func (microrm *Microrm) CreateTable(tableStruct interface{}) (bool, error) {
 }
 
 //this will be replaced once migrations are a thing
-func (microrm *Microrm) DropTable(tableName string) (bool, error) {
+func (microrm *Microrm) DropTable(o interface{}) (bool, error) {
+	var tableName string = inferTableName(o)
 	dropQuery := fmt.Sprintf("DROP TABLE IF EXISTS %s", tableName)
 
 	_, err := microrm.sqlDb.Exec(dropQuery)
