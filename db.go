@@ -67,7 +67,9 @@ func (db *Microrm) Close() {
 }
 
 //this will be replaced once migrations are a thing
-func (microrm *Microrm) CreateTable(tableName string, tableStruct interface{}) (bool, error) {
+func (microrm *Microrm) CreateTable(tableStruct interface{}) (bool, error) {
+	tableName := inferTableName(tableStruct)
+	golog.Info("createTable:inferTableName:", tableName)
 	//Support struct tags for modifiers like not null - we'll allow nulls for the moment
 
 	createQuery := fmt.Sprintf("CREATE TABLE %s (", tableName)

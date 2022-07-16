@@ -63,7 +63,7 @@ func TestOpen(t *testing.T) {
 }
 
 func TestCreateTable(t *testing.T) {
-	createResult, error := microrm.CreateTable("test_table", TestStructure{})
+	createResult, error := microrm.CreateTable(TestStructure{})
 	if createResult != true || error != nil {
 		t.Errorf("Failed to create table")
 	}
