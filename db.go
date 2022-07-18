@@ -72,7 +72,7 @@ func (microrm *Microrm) CreateTable(tableStruct interface{}) (bool, error) {
 	golog.Info("createTable:inferTableName:", tableName)
 	//Support struct tags for modifiers like not null - we'll allow nulls for the moment
 
-	createQuery := fmt.Sprintf("CREATE TABLE %s (", tableName)
+	createQuery := fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s (", tableName)
 
 	structFields := reflect.VisibleFields(reflect.TypeOf(tableStruct))
 	for _, field := range structFields {

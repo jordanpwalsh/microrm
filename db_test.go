@@ -60,11 +60,9 @@ func TestOpen(t *testing.T) {
 }
 
 func TestCreateTable(t *testing.T) {
-	var microrm Microrm
-	setUpTest(&microrm)
-	golog.Info("TestCreateTable:", &microrm)
-
-	defer tearDownTest(&microrm)
+	var microrm *Microrm
+	microrm = setUpTest(microrm)
+	defer tearDownTest(microrm)
 
 	createResult, error := microrm.CreateTable(TestStructure{})
 	if createResult != true || error != nil {
@@ -72,7 +70,8 @@ func TestCreateTable(t *testing.T) {
 	}
 }
 
-func setUpTest(microrm *Microrm) {
+//refactor this to fix warning and crappy design
+func setUpTest(microrm *Microrm) *Microrm {
 	err := os.Remove("./unit_test.db")
 	if err != nil {
 		golog.Errorf("Cannot remove database file")
@@ -80,9 +79,7 @@ func setUpTest(microrm *Microrm) {
 
 	microrm, _ = Open("./unit_test.db")
 	microrm.CreateTable(TestStructure{})
-	golog.Info("setUpTest:", microrm)
-	golog.Info("setUpTest:", &microrm)
-
+	return microrm
 }
 
 func tearDownTest(microrm *Microrm) {
@@ -90,9 +87,9 @@ func tearDownTest(microrm *Microrm) {
 }
 
 func TestInsertOne(t *testing.T) {
-	var microrm Microrm
-	setUpTest(&microrm)
-	defer tearDownTest(&microrm)
+	var microrm *Microrm
+	microrm = setUpTest(microrm)
+	defer tearDownTest(microrm)
 
 	testStruct := TestStructure{
 		Name:      "testVarName",
@@ -108,22 +105,25 @@ func TestInsertOne(t *testing.T) {
 //write test for find
 func TestFind(t *testing.T) {
 	var testStruct TestStructure
-	var microrm Microrm
-	setUpTest(&microrm)
-	defer tearDownTest(&microrm)
+	var microrm *Microrm
+	microrm = setUpTest(microrm)
+	defer tearDownTest(microrm)
 
 	_, err := microrm.Find(&testStruct, 1)
 	if err != nil {
 		t.Errorf("Error finding row")
 	}
 	golog.Info("TestFindValue: %+v", testStruct)
+	if testStruct.Name != "testVarName" {
+		t.Error("Expected value from find incorrect.")
+	}
 }
 
 func TestDropTable(t *testing.T) {
-	var microrm Microrm
+	var microrm *Microrm
 
-	setUpTest(&microrm)
-	defer tearDownTest(&microrm)
+	microrm = setUpTest(microrm)
+	defer tearDownTest(microrm)
 
 	//refactor this
 	dropResult, error := microrm.DropTable(TestStructure{})
@@ -133,8 +133,8 @@ func TestDropTable(t *testing.T) {
 }
 
 func TestClose(t *testing.T) {
-	var microrm Microrm
-	setUpTest(&microrm)
+	var microrm *Microrm
+	microrm = setUpTest(microrm)
 	microrm.Close()
 
 	if err := os.Remove("./unit_test.db"); err != nil {
