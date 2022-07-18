@@ -82,6 +82,15 @@ func TestInsertOne(t *testing.T) {
 }
 
 //write test for find
+func TestFind(t *testing.T) {
+	var testStruct TestStructure
+	_, err := microrm.Find(&testStruct, 1)
+	if err != nil {
+		golog.Error("Error finding row")
+		t.Errorf("Error finding row")
+	}
+	golog.Info("TestFindValue: %+v", testStruct)
+}
 
 func TestDropTable(t *testing.T) {
 	//refactor this
