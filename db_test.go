@@ -62,6 +62,8 @@ func TestOpen(t *testing.T) {
 func TestCreateTable(t *testing.T) {
 	var microrm Microrm
 	setUpTest(&microrm)
+	golog.Info("TestCreateTable:", &microrm)
+
 	defer tearDownTest(&microrm)
 
 	createResult, error := microrm.CreateTable(TestStructure{})
@@ -76,8 +78,11 @@ func setUpTest(microrm *Microrm) {
 		golog.Errorf("Cannot remove database file")
 	}
 
-	microrm, err = Open("./unit_test.db")
+	microrm, _ = Open("./unit_test.db")
 	microrm.CreateTable(TestStructure{})
+	golog.Info("setUpTest:", microrm)
+	golog.Info("setUpTest:", &microrm)
+
 }
 
 func tearDownTest(microrm *Microrm) {
