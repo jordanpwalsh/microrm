@@ -69,7 +69,24 @@ func TestCreateTable(t *testing.T) {
 	}
 }
 
+func setUpTest() {
+	err = os.Remove("./unit_test.db")
+	if err != nil {
+		golog.Errorf("Cannot remove database file")
+	}
+
+	microrm, err = Open("./unit_test.db")
+	microrm.CreateTable(TestStructure{})
+}
+
+func tearDownTest() {
+	defer microrm.Close()
+}
+
 func TestInsertOne(t *testing.T) {
+	setUpTest()
+	defer tearDownTest()
+
 	testStruct := TestStructure{
 		Name:      "testVarName",
 		Byte_val:  22,
@@ -93,6 +110,9 @@ func TestFind(t *testing.T) {
 }
 
 func TestDropTable(t *testing.T) {
+	setUpTest()
+	defer tearDownTest()
+
 	//refactor this
 	dropResult, error := microrm.DropTable(TestStructure{})
 	if dropResult != true || error != nil {
@@ -100,7 +120,8 @@ func TestDropTable(t *testing.T) {
 	}
 }
 
-func TestCloseTable(t *testing.T) {
+func TestClose(t *testing.T) {
+	setUpTest()
 	microrm.Close()
 	if err := os.Remove("./unit_test.db"); err != nil {
 		t.Errorf("Failed to remove database file")
