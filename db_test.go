@@ -14,9 +14,6 @@ type TestStructure struct {
 	Float_val float64
 }
 
-var microrm *Microrm
-var err error
-
 func TestInferTableName(t *testing.T) {
 	tableName := inferTableName(TestStructure{})
 	if tableName != "TestStructure" {
@@ -56,21 +53,25 @@ func TestMapField(t *testing.T) {
 
 }
 func TestOpen(t *testing.T) {
-	microrm, err = Open("./unit_test.db")
+	_, err := Open("./unit_test.db")
 	if err != nil {
 		t.Errorf("Failed to create database")
 	}
 }
 
 func TestCreateTable(t *testing.T) {
+	var microrm Microrm
+	setUpTest(&microrm)
+	defer tearDownTest(&microrm)
+
 	createResult, error := microrm.CreateTable(TestStructure{})
 	if createResult != true || error != nil {
 		t.Errorf("Failed to create table")
 	}
 }
 
-func setUpTest() {
-	err = os.Remove("./unit_test.db")
+func setUpTest(microrm *Microrm) {
+	err := os.Remove("./unit_test.db")
 	if err != nil {
 		golog.Errorf("Cannot remove database file")
 	}
@@ -79,13 +80,14 @@ func setUpTest() {
 	microrm.CreateTable(TestStructure{})
 }
 
-func tearDownTest() {
-	defer microrm.Close()
+func tearDownTest(microrm *Microrm) {
+	microrm.Close()
 }
 
 func TestInsertOne(t *testing.T) {
-	setUpTest()
-	defer tearDownTest()
+	var microrm Microrm
+	setUpTest(&microrm)
+	defer tearDownTest(&microrm)
 
 	testStruct := TestStructure{
 		Name:      "testVarName",
@@ -101,17 +103,22 @@ func TestInsertOne(t *testing.T) {
 //write test for find
 func TestFind(t *testing.T) {
 	var testStruct TestStructure
+	var microrm Microrm
+	setUpTest(&microrm)
+	defer tearDownTest(&microrm)
+
 	_, err := microrm.Find(&testStruct, 1)
 	if err != nil {
-		golog.Error("Error finding row")
 		t.Errorf("Error finding row")
 	}
 	golog.Info("TestFindValue: %+v", testStruct)
 }
 
 func TestDropTable(t *testing.T) {
-	setUpTest()
-	defer tearDownTest()
+	var microrm Microrm
+
+	setUpTest(&microrm)
+	defer tearDownTest(&microrm)
 
 	//refactor this
 	dropResult, error := microrm.DropTable(TestStructure{})
@@ -121,8 +128,10 @@ func TestDropTable(t *testing.T) {
 }
 
 func TestClose(t *testing.T) {
-	setUpTest()
+	var microrm Microrm
+	setUpTest(&microrm)
 	microrm.Close()
+
 	if err := os.Remove("./unit_test.db"); err != nil {
 		t.Errorf("Failed to remove database file")
 	}
