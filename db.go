@@ -166,10 +166,10 @@ func (microrm *Microrm) Find(tableObj interface{}, id int) (bool, error) {
 	}
 
 	//make sure query rows.next again and error out cause we're only returning one here
+	golog.Debugf("findValue: %+v", tableObj)
 	return true, nil
 }
 
-//TODO: insert should use table name instead of inferring from the type
 func (microrm *Microrm) InsertOne(tableObj interface{}) error {
 	tableName := reflect.TypeOf(tableObj).Name()
 	fieldMappings := mapRecordFields(tableObj)

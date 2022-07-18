@@ -81,6 +81,8 @@ func TestInsertOne(t *testing.T) {
 	}
 }
 
+//write test for find
+
 func TestDropTable(t *testing.T) {
 	//refactor this
 	dropResult, error := microrm.DropTable(TestStructure{})
