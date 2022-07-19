@@ -51,7 +51,8 @@ func mapRecordFields(record interface{}) []RecordMapping {
 }
 
 func Open(path string) (*Microrm, error) {
-	db := new(Microrm) //investigate why fields are not set - nil
+	db := Microrm{path: path}
+	//db := new(Microrm) //investigate why fields are not set - nil
 	var err error
 
 	db.sqlDb, err = sql.Open("sqlite3", path)
@@ -59,7 +60,7 @@ func Open(path string) (*Microrm, error) {
 	if err != nil {
 		return nil, err
 	}
-	return db, nil
+	return &db, nil
 }
 
 func (db *Microrm) Close() {
