@@ -70,7 +70,7 @@ func TestCreateTable(t *testing.T) {
 	}
 }
 
-//refactor this to fix warning and crappy design
+//TODO: refactor this to fix warning and crappy design
 func setUpTest(microrm *Microrm) *Microrm {
 	err := os.Remove("./unit_test.db")
 	if err != nil {
