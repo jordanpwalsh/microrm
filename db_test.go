@@ -72,6 +72,7 @@ func TestCreateTable(t *testing.T) {
 
 //TODO: refactor this to fix warning and crappy design
 func setUpTest(microrm *Microrm) *Microrm {
+	golog.Debug("Setting up test")
 	err := os.Remove("./unit_test.db")
 	if err != nil {
 		golog.Errorf("Cannot remove database file")
