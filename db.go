@@ -140,6 +140,7 @@ func (microrm *Microrm) Find(tableObj interface{}, id int) (bool, error) {
 
 	//now we have a []interface{} filled with ready types and we're ready to scan
 	if !rows.Next() {
+		golog.Debug("find: no rows")
 		return false, nil
 	}
 
@@ -171,6 +172,7 @@ func (microrm *Microrm) Find(tableObj interface{}, id int) (bool, error) {
 
 func (microrm *Microrm) InsertOne(tableObj interface{}) error {
 	tableName := reflect.TypeOf(tableObj).Name()
+	//panicing here
 	fieldMappings := mapRecordFields(tableObj)
 
 	//get the field values from each object.. should the mapper do that?

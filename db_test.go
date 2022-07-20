@@ -103,20 +103,53 @@ func TestInsertOne(t *testing.T) {
 	}
 }
 
-//this test is failing because of not handling an empty/non existent table.
-func TestFind(t *testing.T) {
-	var testStruct TestStructure
+func TestFindExpectEmpty(t *testing.T) {
+	type TestEmptyStruct struct {
+		Id   int `microrm:"pk"`
+		name string
+	}
+
 	var microrm *Microrm
 	microrm = setUpTest(microrm)
 	defer tearDownTest(microrm)
+
+	microrm.CreateTable(TestEmptyStruct{})
+	var testEmptyStruct TestEmptyStruct
+
+	res, err := microrm.Find(&testEmptyStruct, 1)
+	if err != nil {
+		t.Errorf("Error finding row")
+	}
+
+	if res == false {
+		return
+	}
+}
+
+func TestFindExpectRow(t *testing.T) {
+	type TestStruct struct {
+		Id   int `microrm:"pk"`
+		Name string
+	}
+
+	var microrm *Microrm
+	microrm = setUpTest(microrm)
+	defer tearDownTest(microrm)
+
+	microrm.CreateTable(TestStruct{})
+	testStruct := TestStruct{Name: "Jordan"}
+	microrm.InsertOne(&testStruct)
+
+	//overwrite struct
+	testStruct = TestStruct{}
 
 	_, err := microrm.Find(&testStruct, 1)
 	if err != nil {
 		t.Errorf("Error finding row")
 	}
-	golog.Info("TestFindValue: %+v", testStruct)
-	if testStruct.Name != "testVarName" {
-		t.Error("Expected value from find incorrect.")
+
+	if testStruct.Name != "Jordan" {
+		t.Error("Find row value not as expected")
 	}
 }
 
