@@ -103,7 +103,7 @@ func TestInsertOne(t *testing.T) {
 	}
 }
 
-//write test for find
+//this test is failing because of not handling an empty/non existent table.
 func TestFind(t *testing.T) {
 	var testStruct TestStructure
 	var microrm *Microrm
