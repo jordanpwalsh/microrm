@@ -36,6 +36,7 @@ func inferTableName(record interface{}) string {
 }
 
 func mapRecordFields(record interface{}) []RecordMapping {
+	//is it because type is empty?
 	structFields := reflect.VisibleFields(reflect.TypeOf(record))
 	recordMappings := make([]RecordMapping, 0)
 

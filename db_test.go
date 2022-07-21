@@ -87,6 +87,7 @@ func tearDownTest(microrm *Microrm) {
 	microrm.Close()
 }
 
+//insert fails if tablObj is pointer.
 func TestInsertOne(t *testing.T) {
 	var microrm *Microrm
 	microrm = setUpTest(microrm)
@@ -97,7 +98,7 @@ func TestInsertOne(t *testing.T) {
 		Byte_val:  22,
 		Float_val: 3.14159,
 	}
-	err := microrm.InsertOne(testStruct)
+	err := microrm.InsertOne(&testStruct)
 	if err != nil {
 		t.Error("Error inserting row", err)
 	}
