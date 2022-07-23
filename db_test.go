@@ -88,7 +88,7 @@ func tearDownTest(microrm *Microrm) {
 }
 
 //insert fails if tablObj is pointer.
-func TestInsertOne(t *testing.T) {
+func TestInsert(t *testing.T) {
 	var microrm *Microrm
 	microrm = setUpTest(microrm)
 	defer tearDownTest(microrm)
@@ -98,36 +98,16 @@ func TestInsertOne(t *testing.T) {
 		Byte_val:  22,
 		Float_val: 3.14159,
 	}
-	err := microrm.InsertOne(&testStruct)
-	if err != nil {
-		t.Error("Error inserting row", err)
-	}
+
+	t.Run("InsertInEmptyTable", func(t *testing.T) {
+		err := microrm.InsertOne(testStruct)
+		if err != nil {
+			t.Error("Error inserting row", err)
+		}
+	})
 }
 
-func TestFindExpectEmpty(t *testing.T) {
-	type TestEmptyStruct struct {
-		Id   int `microrm:"pk"`
-		name string
-	}
-
-	var microrm *Microrm
-	microrm = setUpTest(microrm)
-	defer tearDownTest(microrm)
-
-	microrm.CreateTable(TestEmptyStruct{})
-	var testEmptyStruct TestEmptyStruct
-
-	res, err := microrm.Find(&testEmptyStruct, 1)
-	if err != nil {
-		t.Errorf("Error finding row")
-	}
-
-	if res == false {
-		return
-	}
-}
-
-func TestFindExpectRow(t *testing.T) {
+func TestFind(t *testing.T) {
 	type TestStruct struct {
 		Id   int `microrm:"pk"`
 		Name string
@@ -138,20 +118,34 @@ func TestFindExpectRow(t *testing.T) {
 	defer tearDownTest(microrm)
 
 	microrm.CreateTable(TestStruct{})
-	testStruct := TestStruct{Name: "Jordan"}
-	microrm.InsertOne(&testStruct)
 
-	//overwrite struct
+	t.Run("TestFindExpectEmpty", func(t *testing.T) {
+		var testStruct TestStruct
+		res, err := microrm.Find(&testStruct, 1)
+		if err != nil {
+			t.Errorf("Error finding row")
+		}
+
+		if res == false {
+			return
+		}
+	})
+
+	testStruct := TestStruct{Name: "Jordan"}
+	microrm.InsertOne(testStruct)
 	testStruct = TestStruct{}
 
-	_, err := microrm.Find(&testStruct, 1)
-	if err != nil {
-		t.Errorf("Error finding row")
-	}
+	t.Run("TestFindExpectRow", func(t *testing.T) {
+		_, err := microrm.Find(&testStruct, 1)
+		if err != nil {
+			t.Errorf("Error finding row")
+		}
 
-	if testStruct.Name != "Jordan" {
-		t.Error("Find row value not as expected")
-	}
+		if testStruct.Name != "Jordan" {
+			t.Error("Find row value not as expected")
+		}
+
+	})
 }
 
 func TestDropTable(t *testing.T) {
