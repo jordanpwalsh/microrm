@@ -73,10 +73,10 @@ func TestCreateTable(t *testing.T) {
 //TODO: refactor this to fix warning and crappy design
 func setUpTest(microrm *Microrm) *Microrm {
 	golog.Debug("Setting up test")
-	err := os.Remove("./unit_test.db")
-	if err != nil {
-		golog.Errorf("Cannot remove database file")
-	}
+	// err := os.Remove("./unit_test.db")
+	// if err != nil {
+	// 	golog.Errorf("Cannot remove database file")
+	// }
 
 	microrm, _ = Open("./unit_test.db")
 	microrm.CreateTable(TestStructure{})
@@ -121,11 +121,12 @@ func TestFind(t *testing.T) {
 
 	t.Run("TestFindExpectEmpty", func(t *testing.T) {
 		var testStruct TestStruct
-		res, err := microrm.Find(&testStruct, 1)
+		res, err := microrm.Find(&testStruct, 0)
 		if err != nil {
 			t.Errorf("Error finding row")
 		}
 
+		golog.Info("TestFindExpectEmpty:", testStruct)
 		if res == false {
 			return
 		}
@@ -136,7 +137,7 @@ func TestFind(t *testing.T) {
 	testStruct = TestStruct{}
 
 	t.Run("TestFindExpectRow", func(t *testing.T) {
-		res, err := microrm.Find(&testStruct, 1)
+		res, err := microrm.Find(&testStruct, 0)
 		if err != nil {
 			t.Errorf("Error finding row")
 		}

@@ -142,7 +142,7 @@ func (microrm *Microrm) Find(tableObj interface{}, id int) (bool, error) {
 	//now we have a []interface{} filled with ready types and we're ready to scan
 	if !rows.Next() {
 		golog.Debug("find: no rows")
-		return false, nil
+		//	return false, nil
 	}
 
 	rows.Scan(obj...)
@@ -165,6 +165,7 @@ func (microrm *Microrm) Find(tableObj interface{}, id int) (bool, error) {
 			}
 		}
 		//reflect.ValueOf(tableObj).Elem().FieldByName(fieldNameCased).Set(reflect.ValueOf(value))
+		golog.Info("fieldNameCased:", fieldNameCased, " findValue:", reflect.ValueOf(tableObj).Elem().FieldByName(fieldNameCased))
 	}
 
 	//make sure query rows.next again and error out cause we're only returning one here
