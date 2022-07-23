@@ -136,13 +136,13 @@ func TestFind(t *testing.T) {
 	testStruct = TestStruct{}
 
 	t.Run("TestFindExpectRow", func(t *testing.T) {
-		_, err := microrm.Find(&testStruct, 1)
+		res, err := microrm.Find(&testStruct, 1)
 		if err != nil {
 			t.Errorf("Error finding row")
 		}
 
 		if testStruct.Name != "Jordan" {
-			t.Error("Find row value not as expected")
+			t.Error("Find expected Jordan but got ", testStruct.Name, " and res was: ", res)
 		}
 
 	})
