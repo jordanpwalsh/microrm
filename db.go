@@ -164,7 +164,8 @@ func (microrm *Microrm) Find(tableObj interface{}, id int) (bool, error) {
 				value = true
 			}
 		}
-		//reflect.ValueOf(tableObj).Elem().FieldByName(fieldNameCased).Set(reflect.ValueOf(value))
+
+		reflect.ValueOf(tableObj).Elem().FieldByName(fieldNameCased).Set(reflect.ValueOf(value).Convert(fieldType))
 		golog.Info("fieldNameCased:", fieldNameCased, " findValue:", value)
 	}
 
