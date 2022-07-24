@@ -165,7 +165,7 @@ func (microrm *Microrm) Find(tableObj interface{}, id int) (bool, error) {
 			}
 		}
 		//reflect.ValueOf(tableObj).Elem().FieldByName(fieldNameCased).Set(reflect.ValueOf(value))
-		golog.Info("fieldNameCased:", fieldNameCased, " findValue:", reflect.ValueOf(tableObj).Elem().FieldByName(fieldNameCased))
+		golog.Info("fieldNameCased:", fieldNameCased, " findValue:", value)
 	}
 
 	//make sure query rows.next again and error out cause we're only returning one here
