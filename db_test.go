@@ -93,16 +93,29 @@ func TestInsert(t *testing.T) {
 	microrm = setUpTest(microrm)
 	defer tearDownTest(microrm)
 
-	testStruct := TestStructure{
-		Name:      "testVarName",
-		Byte_val:  22,
-		Float_val: 3.14159,
-	}
-
 	t.Run("InsertInEmptyTable", func(t *testing.T) {
+		testStruct := TestStructure{
+			Name:      "testVarName",
+			Byte_val:  22,
+			Float_val: 3.14159,
+		}
 		err := microrm.InsertOne(testStruct)
 		if err != nil {
 			t.Error("Error inserting row", err)
+		}
+	})
+
+	//Bug to Fix: Insert fails on 2nd row because id exists.
+	t.Run("InsertInExistingTable", func(t *testing.T) {
+		testStruct := TestStructure{
+			Name:      "testVarSecondNameTwo",
+			Byte_val:  44,
+			Float_val: 22.666,
+		}
+
+		err := microrm.InsertOne(testStruct)
+		if err != nil {
+			t.Error("Error inserting row")
 		}
 	})
 }
