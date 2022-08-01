@@ -142,7 +142,7 @@ func (microrm *Microrm) Find(tableObj interface{}, id int) (bool, error) {
 	//now we have a []interface{} filled with ready types and we're ready to scan
 	if !rows.Next() {
 		golog.Debug("find: no rows")
-		//	return false, nil
+		return false, nil
 	}
 
 	rows.Scan(obj...)
