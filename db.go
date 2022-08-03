@@ -170,6 +170,7 @@ func (microrm *Microrm) Find(tableObj interface{}, id int) (bool, error) {
 	}
 
 	//make sure query rows.next again and error out cause we're only returning one here
+	//or do we care?
 	return true, nil
 }
 
