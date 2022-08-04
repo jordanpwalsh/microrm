@@ -17,7 +17,6 @@ type TestStructure struct {
 func TestInferTableName(t *testing.T) {
 	tableName := inferTableName(TestStructure{})
 	if tableName != "TestStructure" {
-		golog.Info("TableName:", tableName)
 		t.Error("Table name not as expected")
 	}
 
@@ -29,7 +28,6 @@ func TestInferTableName(t *testing.T) {
 	}
 	tableName = inferTableName(testStruct)
 	if tableName != "TestStructure" {
-		golog.Info("TableName:", tableName)
 		t.Error("Table name not as expected")
 	}
 
@@ -72,12 +70,6 @@ func TestCreateTable(t *testing.T) {
 
 //TODO: refactor this to fix warning and crappy design
 func setUpTest(microrm *Microrm) *Microrm {
-	golog.Debug("Setting up test")
-	// err := os.Remove("./unit_test.db")
-	// if err != nil {
-	// 	golog.Errorf("Cannot remove database file")
-	// }
-
 	microrm, _ = Open("./unit_test.db")
 	microrm.CreateTable(TestStructure{})
 	return microrm
@@ -115,7 +107,7 @@ func TestInsert(t *testing.T) {
 
 		err := microrm.InsertOne(testStruct)
 		if err != nil {
-			t.Error("Error inserting row")
+			t.Error("Error inserting row:", err)
 		}
 	})
 }
@@ -132,14 +124,13 @@ func TestFind(t *testing.T) {
 
 	microrm.CreateTable(TestStruct{})
 
-	t.Run("TestFindExpectEmpty", func(t *testing.T) {
+	t.Run("TestFindByIdEmpty", func(t *testing.T) {
 		var testStruct TestStruct
-		res, err := microrm.Find(&testStruct, 0)
+		res, err := microrm.FindById(&testStruct, 0)
 		if err != nil {
 			t.Errorf("Error finding row")
 		}
 
-		golog.Info("TestFindExpectEmpty:", testStruct)
 		if res == false {
 			return
 		}
@@ -149,8 +140,8 @@ func TestFind(t *testing.T) {
 	microrm.InsertOne(testStruct)
 	testStruct = TestStruct{}
 
-	t.Run("TestFindExpectRow", func(t *testing.T) {
-		res, err := microrm.Find(&testStruct, 0)
+	t.Run("TestFindBytIdExpectRow", func(t *testing.T) {
+		res, err := microrm.FindById(&testStruct, 0)
 		if err != nil {
 			t.Errorf("Error finding row")
 		}

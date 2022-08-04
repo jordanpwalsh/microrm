@@ -116,7 +116,7 @@ func (microrm *Microrm) DropTable(o interface{}) (bool, error) {
 }
 
 //refactor this to use field mapper function
-func (microrm *Microrm) Find(tableObj interface{}, id int) (bool, error) {
+func (microrm *Microrm) FindById(tableObj interface{}, id int) (bool, error) {
 	tableName := strings.ToLower(reflect.TypeOf(tableObj).Elem().Name())
 
 	selectQuery := fmt.Sprintf("SELECT * FROM %s WHERE id=%d", tableName, id)
