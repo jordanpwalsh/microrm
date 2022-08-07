@@ -140,7 +140,7 @@ func TestFind(t *testing.T) {
 	microrm.InsertOne(testStruct)
 	testStruct = TestStruct{}
 
-	t.Run("TestFindBytIdExpectRow", func(t *testing.T) {
+	t.Run("TestFindByIdExpectRow", func(t *testing.T) {
 		res, err := microrm.FindById(&testStruct, 0)
 		if err != nil {
 			t.Errorf("Error finding row")
