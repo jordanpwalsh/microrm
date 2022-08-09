@@ -141,7 +141,7 @@ func TestFind(t *testing.T) {
 	testStruct = TestStruct{}
 
 	t.Run("TestFindByIdExpectRow", func(t *testing.T) {
-		res, err := microrm.FindById(&testStruct, 0)
+		res, err := microrm.FindById(&testStruct, 1)
 		if err != nil {
 			t.Errorf("Error finding row")
 		}

@@ -176,7 +176,6 @@ func (microrm *Microrm) FindById(tableObj interface{}, id int) (bool, error) {
 
 func (microrm *Microrm) InsertOne(tableObj interface{}) error {
 	tableName := reflect.TypeOf(tableObj).Name()
-	//panicing here
 	fieldMappings := mapRecordFields(tableObj)
 
 	//get the field values from each object.. should the mapper do that?
@@ -184,14 +183,24 @@ func (microrm *Microrm) InsertOne(tableObj interface{}) error {
 	//build two strings: typeString: name, type and valueString: values
 	//first from field mapping, second from fields by index if possible.
 	var typeString string
-	for _, field := range fieldMappings {
+	var idIndex int
+	for i, field := range fieldMappings {
+		if field.name == "Id" {
+			//we don't want Id in the insert, skip it.
+			idIndex = i
+			continue
+		}
 		typeString += fmt.Sprintf("%s,", field.name)
 	}
 	typeString = strings.TrimSuffix(typeString, ",")
 
 	refTableObj := reflect.ValueOf(tableObj)
 	var valueString string
+	//start loop at 1 to skip Id field. Hacky, but it works.
 	for i := 0; i < refTableObj.NumField(); i++ {
+		if i == idIndex {
+			continue
+		}
 		valueString += fmt.Sprintf("\"%v\",", refTableObj.Field(i).Interface())
 	}
 	valueString = strings.TrimSuffix(valueString, ",")
