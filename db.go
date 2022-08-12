@@ -115,6 +115,13 @@ func (microrm *Microrm) DropTable(o interface{}) (bool, error) {
 	return true, nil
 }
 
+func (microrm *Microrm) FindWhere(tableSlice []interface{}, field string, operator string, value string) (bool, error) {
+	operatingTable := tableSlice[0]
+	tableName := inferTableName(operatingTable)
+	//use the field mapper as in the comment below.
+
+}
+
 //refactor this to use field mapper function
 func (microrm *Microrm) FindById(tableObj interface{}, id int) (bool, error) {
 	tableName := strings.ToLower(reflect.TypeOf(tableObj).Elem().Name())
